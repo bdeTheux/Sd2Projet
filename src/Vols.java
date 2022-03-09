@@ -1,17 +1,18 @@
 public class Vols {
 
-  private final Aeroport source;
-  private final Aeroport destination;
   private final String airline;
-  public Vols(Aeroport source, Aeroport destination, String airline) {
+  private final String source;
+  private final String destination;
+
+  public Vols(String airline, String source, String destination) {
     this.source = source;
     this.destination = destination;
     this.airline = airline;
   }
-  public Aeroport getSource() {
+  public String getSource() {
     return source;
   }
-  public Aeroport getDestination() {
+  public String getDestination() {
     return destination;
   }
   public String getAirline() {
@@ -20,6 +21,6 @@ public class Vols {
 
   @Override
   public String toString() {
-    return "Flight [source=" + source.getIata() + ", destination=" + destination.getIata() + ", airline=" + airline + "]";
+    return "Flight [source=" + source + ", destination=" + destination + ", airline=" + airline + "]";
   }
 }

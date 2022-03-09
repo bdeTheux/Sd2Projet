@@ -6,10 +6,10 @@ public class Aeroport {
     private String nom;
     private String ville;
     private String pays;
-    private long longitude;
-    private long latitude;
+    private double longitude;
+    private double latitude;
 
-    public Aeroport(String iata, String nom, String ville, String pays, long longitude, long latitude) {
+    public Aeroport(String iata, String nom, String ville, String pays, double longitude, double latitude) {
         this.iata = iata;
         this.nom = nom;
         this.ville = ville;
@@ -35,11 +35,11 @@ public class Aeroport {
         return pays;
     }
 
-    public long getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public long getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
