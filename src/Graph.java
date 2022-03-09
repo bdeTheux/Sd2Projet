@@ -1,6 +1,9 @@
 import java.io.*;
+import java.util.Map;
 
 public class Graph {
+
+  private Map<String, Aeroport> correspondanceIataAirport;
 
   public Graph(File aeroport, File vols) throws IOException {
 
