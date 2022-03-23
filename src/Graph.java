@@ -2,11 +2,14 @@ import java.io.*;
 import java.sql.SQLOutput;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import javax.print.attribute.HashPrintJobAttributeSet;
 
 public class Graph {
@@ -28,7 +31,6 @@ public class Graph {
     Deque<Aeroport> filePath = new ArrayDeque<Aeroport>();
     Set<Aeroport> visited = new HashSet<Aeroport>();
     Map<String, String> path = new HashMap<String, String>();
-    path.put("Start", iataSource);
     filePath.add(aeroport);
     while(!filePath.isEmpty() && !path.containsKey(iataDestination)){
       aeroport = filePath.removeFirst();
@@ -57,6 +59,19 @@ public class Graph {
   }
 
   public String calculerItineraireMiniminantDistance(String iataSource, String iataDestination){
+    Set<Aeroport> etiquetteProvisoire= new TreeSet<Aeroport>(new Comparator<Aeroport>() {
+      @Override
+      public int compare(Aeroport o1, Aeroport o2) {
+        double distance = Util.distance(o1.getLatitude(), o1.getLongitude(), o2.getLatitude(), o2.getLongitude());
+        return distance >= 0?1:-1;
+      }
+    });
+    Set<Aeroport> etiquetteDef = new HashSet<Aeroport>();
+    Map<String, String> path = new HashMap<String, String>();
+    Aeroport aeroport = iataToAeroport.get(iataSource);
+
+
+
     return "";
   }
 
