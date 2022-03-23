@@ -28,26 +28,26 @@ public class Graph {
     Deque<Aeroport> filePath = new ArrayDeque<Aeroport>();
     Set<Aeroport> visited = new HashSet<Aeroport>();
     Map<String, String> path = new HashMap<String, String>();
+    path.put("Start", iataSource);
     filePath.add(aeroport);
-    while(!filePath.isEmpty() && aeroport != iataToAeroport.get(iataDestination)){
+    while(!filePath.isEmpty() && !path.containsKey(iataDestination)){
       aeroport = filePath.removeFirst();
-      //System.out.println(outputFlights.get(aeroport));
       for(Vol vol: outputFlights.get(aeroport)){
-        if(!visited.contains(vol.getDestination())) {
+        if(!visited.contains(iataToAeroport.get(vol.getDestination()))) {
           filePath.add(iataToAeroport.get(vol.getDestination()));
-          visited.add(aeroport);
-          path.put(vol.getSource(), vol.getDestination());
+          visited.add(iataToAeroport.get(vol.getDestination()));
+          path.put(vol.getDestination(), aeroport.getIata());
         }
       }
     }
 
-    if(!path.containsValue(iataDestination)){
+    if(!path.containsKey(iataDestination)){
       System.out.println("Il n'y a pas de vols possible");
     }
 
-    String baladeur =iataDestination;
+    String baladeur = iataDestination;
     ArrayList<String> itineraire = new ArrayList<String>();
-    while(baladeur.equals(iataSource)){
+    while(!baladeur.equals(iataSource)){
       itineraire.add(baladeur);
       System.out.println(baladeur);
       baladeur = path.get(baladeur);
