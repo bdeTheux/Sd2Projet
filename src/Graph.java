@@ -1,8 +1,13 @@
 import java.io.*;
+import java.sql.SQLOutput;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.print.attribute.HashPrintJobAttributeSet;
 
 public class Graph {
 
@@ -19,6 +24,35 @@ public class Graph {
   }
 
   public String calculerItineraireMinimisantNombreVol(String iataSource, String iataDestination){
+    Aeroport aeroport = iataToAeroport.get(iataSource);
+    Deque<Aeroport> filePath = new ArrayDeque<Aeroport>();
+    Set<Aeroport> visited = new HashSet<Aeroport>();
+    Map<String, String> path = new HashMap<String, String>();
+    filePath.add(aeroport);
+    while(!filePath.isEmpty() && aeroport != iataToAeroport.get(iataDestination)){
+      aeroport = filePath.removeFirst();
+      //System.out.println(outputFlights.get(aeroport));
+      for(Vol vol: outputFlights.get(aeroport)){
+        if(!visited.contains(vol.getDestination())) {
+          filePath.add(iataToAeroport.get(vol.getDestination()));
+          visited.add(aeroport);
+          path.put(vol.getSource(), vol.getDestination());
+        }
+      }
+    }
+
+    if(!path.containsValue(iataDestination)){
+      System.out.println("Il n'y a pas de vols possible");
+    }
+
+    String baladeur =iataDestination;
+    ArrayList<String> itineraire = new ArrayList<String>();
+    while(baladeur.equals(iataSource)){
+      itineraire.add(baladeur);
+      System.out.println(baladeur);
+      baladeur = path.get(baladeur);
+    }
+
     return "";
   }
 
