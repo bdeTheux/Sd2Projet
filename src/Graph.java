@@ -48,10 +48,13 @@ public class Graph {
     }
 
     String baladeur = iataDestination;
+    int distance = 0;
     ArrayList<String> itineraire = new ArrayList<String>();
     while(!baladeur.equals(iataSource)){
       itineraire.add(baladeur);
       System.out.println(baladeur);
+      //System.out.println(iataToAeroport.get(baladeur).getNom());
+      //System.out.println(itineraire);
       baladeur = path.get(baladeur);
     }
 
@@ -62,8 +65,7 @@ public class Graph {
     Set<Aeroport> etiquetteProvisoire= new TreeSet<Aeroport>(new Comparator<Aeroport>() {
       @Override
       public int compare(Aeroport o1, Aeroport o2) {
-        double distance = Util.distance(o1.getLatitude(), o1.getLongitude(), o2.getLatitude(), o2.getLongitude());
-        return distance >= 0?1:-1;
+        return o1.getCout() >= o2.getCout()?1:-1;
       }
     });
     Set<Aeroport> etiquetteDef = new HashSet<Aeroport>();
@@ -71,6 +73,37 @@ public class Graph {
     Aeroport aeroport = iataToAeroport.get(iataSource);
 
 
+    while(!aeroport.equals(iataToAeroport.get(iataDestination))){
+      for(Vol vol: outputFlights.get(aeroport)) {
+        if(!etiquetteDef.contains(iataToAeroport.get(vol.getDestination()))) {
+          double tmpCout = aeroport.getCout() + Util.distance(aeroport.getLatitude(), aeroport.getLongitude(), iataToAeroport.get(vol.getDestination()).getLatitude(), iataToAeroport.get(vol.getDestination()).getLongitude());
+          if (etiquetteProvisoire.contains(iataToAeroport.get(vol.getDestination()))) {
+            if(tmpCout < aeroport.getCout()){
+              aeroport.setCout(tmpCout);
+              etiquetteProvisoire.remove(aeroport);
+              path.put(vol.getDestination(), aeroport.getIata());
+              etiquetteProvisoire.add(aeroport);
+            }
+          }else{
+            aeroport.setCout(tmpCout);
+            path.put(vol.getDestination(), aeroport.getIata());
+            etiquetteProvisoire.add(aeroport);
+          }
+        }
+      }
+      if(etiquetteProvisoire.isEmpty()) return "Non non non jeune homme";
+      etiquetteDef.add(aeroport);
+      aeroport = etiquetteProvisoire.iterator().next();
+      etiquetteProvisoire.remove(aeroport);
+    }
+
+    String baladeur = iataDestination;
+    ArrayList<String> itineraire = new ArrayList<String>();
+    while(!baladeur.equals(iataSource)){
+      itineraire.add(baladeur);
+      System.out.println(baladeur);
+      baladeur = path.get(baladeur);
+    }
 
     return "";
   }

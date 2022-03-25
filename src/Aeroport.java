@@ -8,6 +8,7 @@ public class Aeroport {
     private String pays;
     private double longitude;
     private double latitude;
+    private double cout;
 
     public Aeroport(String iata, String nom, String ville, String pays, double longitude, double latitude) {
         this.iata = iata;
@@ -41,6 +42,14 @@ public class Aeroport {
 
     public double getLatitude() {
         return latitude;
+    }
+
+    public double getCout() {
+        return cout;
+    }
+
+    public void setCout(double cout){
+        this.cout = cout;
     }
 
     @Override
