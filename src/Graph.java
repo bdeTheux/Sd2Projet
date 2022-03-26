@@ -53,15 +53,9 @@ public class Graph {
     ArrayList<String> itineraire = new ArrayList<String>();
     while(!baladeur.equals(iataSource)){
       itineraire.add(baladeur);
-      //System.out.println(baladeur);
-      //System.out.println(iataToAeroport.get(baladeur).getNom());
-      //System.out.println(itineraire);
-
       baladeur = path.get(baladeur);
     }
     itineraire.add(iataSource);
-
-
     for (int i=itineraire.size()-1; i>0; i--){
       Vol fligt;
       distance += Util.distance(iataToAeroport.get(itineraire.get(i)).getLatitude(), iataToAeroport.get(itineraire.get(i)).getLongitude(),
@@ -77,11 +71,7 @@ public class Graph {
           break;
         }
       }
-
     }
-
-
-
     System.out.println("Distance total : " +distance);
     return "";
   }
@@ -90,7 +80,6 @@ public class Graph {
     Set<Aeroport> etiquetteProvisoire= new TreeSet<Aeroport>(new Comparator<Aeroport>() {
       @Override
       public int compare(Aeroport o1, Aeroport o2) {
-        //return o1.getCout() >= o2.getCout()?1:-1;
         int cout = Double.compare(o1.getCout(), o2.getCout());
         if (cout == 0) {
           return o1.getIata().compareTo(o2.getIata());
@@ -103,28 +92,24 @@ public class Graph {
     *ou qu'il y ai plusieurs compagnie avec le même vols
     */
     Map<String, Vol> pathVol = new HashMap<String, Vol>();
-
     Aeroport aeroport = iataToAeroport.get(iataSource);
     Deque<Vol> vols = new ArrayDeque<>();
 
     while(!aeroport.getIata().equals(iataDestination)){
       for(Vol vol: outputFlights.get(aeroport)) {
         if(!etiquetteDef.contains(iataToAeroport.get(vol.getDestination()))) {
-          double tmpCout = aeroport.getCout() + Util.distance(iataToAeroport.get(vol.getSource()).getLatitude(), iataToAeroport.get(vol.getSource()).getLongitude(),
-                  iataToAeroport.get(vol.getDestination()).getLatitude(), iataToAeroport.get(vol.getDestination()).getLongitude());
+          double tmpCout = aeroport.getCout() + vol.getDistance();
           if (etiquetteProvisoire.contains(iataToAeroport.get(vol.getDestination()))) {
-
             if(tmpCout < iataToAeroport.get(vol.getDestination()).getCout()){
               etiquetteProvisoire.remove(iataToAeroport.get(vol.getDestination()));
-
               iataToAeroport.get(vol.getDestination()).setCout(tmpCout);
               pathVol.put(vol.getDestination(), vol);
               etiquetteProvisoire.add(iataToAeroport.get(vol.getDestination()));
             }
+
           }else{
             iataToAeroport.get(vol.getDestination()).setCout(tmpCout);
             pathVol.put(vol.getDestination(), vol);
-
             etiquetteProvisoire.add(iataToAeroport.get(vol.getDestination()));
           }
 
@@ -138,16 +123,14 @@ public class Graph {
     }
 
     String baladeur = iataDestination;
-    double distance = iataToAeroport.get(iataSource).getCout();
     ArrayList<Vol> itineraire = new ArrayList<Vol>();
     while(!baladeur.equals(iataSource)){
       itineraire.add(pathVol.get(baladeur));
-      //System.out.println( + " Distance : " + iataToAeroport.get(baladeur).getCout());
       baladeur = pathVol.get(baladeur).getSource();
     }
     System.out.println("Distance : " + iataToAeroport.get(iataDestination).getCout());
     for(int i=itineraire.size()-1; i>=0 ; i--){
-      System.out.println(itineraire.get(i) + " distance : " + iataToAeroport.get(itineraire.get(i).getDestination()).getCout());
+      System.out.println(itineraire.get(i));
     }
     return "";
   }
@@ -163,19 +146,11 @@ public class Graph {
         outputFlights.put(aeroport, new HashSet<Vol>());
         iataToAeroport.put(aeroport.getIata(), aeroport);
       }else{
-        Vol vol = new Vol(ligneCoupe[0],ligneCoupe[1], ligneCoupe[2]);
+        double distance = Util.distance(iataToAeroport.get(ligneCoupe[1]).getLatitude(),iataToAeroport.get(ligneCoupe[1]).getLongitude(),
+                iataToAeroport.get(ligneCoupe[2]).getLatitude(),iataToAeroport.get(ligneCoupe[2]).getLongitude());
+        Vol vol = new Vol(ligneCoupe[0],ligneCoupe[1], ligneCoupe[2], distance);
         outputFlights.get(iataToAeroport.get(vol.getSource())).add(vol);
       }
     }
   }
 }
-
-/*
-System.out.println(ligneCoupe[0]);
-        System.out.println(ligneCoupe[1]);
-        System.out.println(ligneCoupe[2]);
-        System.out.println(ligneCoupe[3]);
-        System.out.println(ligneCoupe[4]);
-        System.out.println(ligneCoupe[5]);
- */
-
