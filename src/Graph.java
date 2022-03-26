@@ -93,7 +93,6 @@ public class Graph {
     */
     Map<String, Vol> pathVol = new HashMap<String, Vol>();
     Aeroport aeroport = iataToAeroport.get(iataSource);
-    Deque<Vol> vols = new ArrayDeque<>();
 
     while(!aeroport.getIata().equals(iataDestination)){
       for(Vol vol: outputFlights.get(aeroport)) {
