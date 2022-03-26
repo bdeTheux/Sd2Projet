@@ -48,7 +48,7 @@ public class Graph {
     }
 
     String baladeur = iataDestination;
-    int distance = 0;
+    double distance = iataToAeroport.get(iataSource).getCout();;
     ArrayList<String> itineraire = new ArrayList<String>();
     while(!baladeur.equals(iataSource)){
       itineraire.add(baladeur);
@@ -57,7 +57,12 @@ public class Graph {
       //System.out.println(itineraire);
       baladeur = path.get(baladeur);
     }
-
+    itineraire.add(iataSource);
+    for (int i=0; i<itineraire.size()-1; i++){
+      distance += Util.distance(iataToAeroport.get(itineraire.get(i)).getLatitude(), iataToAeroport.get(itineraire.get(i)).getLongitude(),
+              iataToAeroport.get(itineraire.get(i+1)).getLatitude(), iataToAeroport.get(itineraire.get(i+1)).getLongitude());
+    }
+    System.out.println(distance);
     return "";
   }
 
@@ -65,46 +70,56 @@ public class Graph {
     Set<Aeroport> etiquetteProvisoire= new TreeSet<Aeroport>(new Comparator<Aeroport>() {
       @Override
       public int compare(Aeroport o1, Aeroport o2) {
-        return o1.getCout() >= o2.getCout()?1:-1;
+        //return o1.getCout() >= o2.getCout()?1:-1;
+        int cout = Double.compare(o1.getCout(), o2.getCout());
+        if (cout == 0) {
+          return o1.getIata().compareTo(o2.getIata());
+        }
+        return cout;
       }
     });
     Set<Aeroport> etiquetteDef = new HashSet<Aeroport>();
     Map<String, String> path = new HashMap<String, String>();
     Aeroport aeroport = iataToAeroport.get(iataSource);
 
-
-    while(!aeroport.equals(iataToAeroport.get(iataDestination))){
+    while(!path.containsKey(iataDestination)){
       for(Vol vol: outputFlights.get(aeroport)) {
         if(!etiquetteDef.contains(iataToAeroport.get(vol.getDestination()))) {
-          double tmpCout = aeroport.getCout() + Util.distance(aeroport.getLatitude(), aeroport.getLongitude(), iataToAeroport.get(vol.getDestination()).getLatitude(), iataToAeroport.get(vol.getDestination()).getLongitude());
+          double tmpCout = aeroport.getCout() + Util.distance(iataToAeroport.get(vol.getSource()).getLatitude(), iataToAeroport.get(vol.getSource()).getLongitude(),
+                  iataToAeroport.get(vol.getDestination()).getLatitude(), iataToAeroport.get(vol.getDestination()).getLongitude());
           if (etiquetteProvisoire.contains(iataToAeroport.get(vol.getDestination()))) {
-            if(tmpCout < aeroport.getCout()){
-              aeroport.setCout(tmpCout);
-              etiquetteProvisoire.remove(aeroport);
+
+            if(tmpCout < iataToAeroport.get(vol.getDestination()).getCout()){
+              etiquetteProvisoire.remove(iataToAeroport.get(vol.getDestination()));
+
+              iataToAeroport.get(vol.getDestination()).setCout(tmpCout);
               path.put(vol.getDestination(), aeroport.getIata());
-              etiquetteProvisoire.add(aeroport);
+              etiquetteProvisoire.add(iataToAeroport.get(vol.getDestination()));
             }
           }else{
-            aeroport.setCout(tmpCout);
+            iataToAeroport.get(vol.getDestination()).setCout(tmpCout);
             path.put(vol.getDestination(), aeroport.getIata());
-            etiquetteProvisoire.add(aeroport);
+            etiquetteProvisoire.add(iataToAeroport.get(vol.getDestination()));
           }
+
         }
       }
-      if(etiquetteProvisoire.isEmpty()) return "Non non non jeune homme";
+
+      if(etiquetteProvisoire.isEmpty()) return "Aucun de vol vers cette aeroport";
       etiquetteDef.add(aeroport);
       aeroport = etiquetteProvisoire.iterator().next();
       etiquetteProvisoire.remove(aeroport);
     }
 
     String baladeur = iataDestination;
+    double distance = iataToAeroport.get(iataSource).getCout();
     ArrayList<String> itineraire = new ArrayList<String>();
     while(!baladeur.equals(iataSource)){
       itineraire.add(baladeur);
       System.out.println(baladeur);
       baladeur = path.get(baladeur);
     }
-
+    System.out.println(iataToAeroport.get(iataDestination).getCout());
     return "";
   }
 
@@ -134,3 +149,4 @@ System.out.println(ligneCoupe[0]);
         System.out.println(ligneCoupe[4]);
         System.out.println(ligneCoupe[5]);
  */
+
