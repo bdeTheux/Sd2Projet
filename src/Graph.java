@@ -48,21 +48,41 @@ public class Graph {
     }
 
     String baladeur = iataDestination;
-    double distance = iataToAeroport.get(iataSource).getCout();;
+    double distance = iataToAeroport.get(iataSource).getCout();
+    double distanceTmp;
     ArrayList<String> itineraire = new ArrayList<String>();
     while(!baladeur.equals(iataSource)){
       itineraire.add(baladeur);
-      System.out.println(baladeur);
+      //System.out.println(baladeur);
       //System.out.println(iataToAeroport.get(baladeur).getNom());
       //System.out.println(itineraire);
+
       baladeur = path.get(baladeur);
     }
     itineraire.add(iataSource);
-    for (int i=0; i<itineraire.size()-1; i++){
+
+
+    for (int i=itineraire.size()-1; i>0; i--){
+      Vol fligt;
       distance += Util.distance(iataToAeroport.get(itineraire.get(i)).getLatitude(), iataToAeroport.get(itineraire.get(i)).getLongitude(),
-              iataToAeroport.get(itineraire.get(i+1)).getLatitude(), iataToAeroport.get(itineraire.get(i+1)).getLongitude());
+              iataToAeroport.get(itineraire.get(i-1)).getLatitude(), iataToAeroport.get(itineraire.get(i-1)).getLongitude());
+      distanceTmp=Util.distance(iataToAeroport.get(itineraire.get(i)).getLatitude(), iataToAeroport.get(itineraire.get(i)).getLongitude(),
+          iataToAeroport.get(itineraire.get(i-1)).getLatitude(), iataToAeroport.get(itineraire.get(i-1)).getLongitude());
+
+      for(Vol vol :outputFlights.get(iataToAeroport.get(itineraire.get(i)))){
+        if(vol.getSource().equals(itineraire.get(i)) && vol.getDestination().equals(itineraire.get(i-1))){
+          fligt = vol;
+          System.out.println("Vol [source=" +iataToAeroport.get(itineraire.get(i)).getNom() +", destination=" + iataToAeroport.get(itineraire.get(i-1)).getNom() +
+              ", airline=" + fligt.getAirline() +", distance =" + distanceTmp +"]");
+          break;
+        }
+      }
+
     }
-    System.out.println(distance);
+
+
+
+    System.out.println("Distance total : " +distance);
     return "";
   }
 
