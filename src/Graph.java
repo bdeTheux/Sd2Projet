@@ -99,10 +99,15 @@ public class Graph {
       }
     });
     Set<Aeroport> etiquetteDef = new HashSet<Aeroport>();
-    Map<String, String> path = new HashMap<String, String>();
-    Aeroport aeroport = iataToAeroport.get(iataSource);
+    /*Si jamais les vols n'étaient pas des lignes droites
+    *ou qu'il y ai plusieurs compagnie avec le même vols
+    */
+    Map<String, Vol> pathVol = new HashMap<String, Vol>();
 
-    while(!path.containsKey(iataDestination)){
+    Aeroport aeroport = iataToAeroport.get(iataSource);
+    Deque<Vol> vols = new ArrayDeque<>();
+
+    while(!aeroport.getIata().equals(iataDestination)){
       for(Vol vol: outputFlights.get(aeroport)) {
         if(!etiquetteDef.contains(iataToAeroport.get(vol.getDestination()))) {
           double tmpCout = aeroport.getCout() + Util.distance(iataToAeroport.get(vol.getSource()).getLatitude(), iataToAeroport.get(vol.getSource()).getLongitude(),
@@ -113,12 +118,13 @@ public class Graph {
               etiquetteProvisoire.remove(iataToAeroport.get(vol.getDestination()));
 
               iataToAeroport.get(vol.getDestination()).setCout(tmpCout);
-              path.put(vol.getDestination(), aeroport.getIata());
+              pathVol.put(vol.getDestination(), vol);
               etiquetteProvisoire.add(iataToAeroport.get(vol.getDestination()));
             }
           }else{
             iataToAeroport.get(vol.getDestination()).setCout(tmpCout);
-            path.put(vol.getDestination(), aeroport.getIata());
+            pathVol.put(vol.getDestination(), vol);
+
             etiquetteProvisoire.add(iataToAeroport.get(vol.getDestination()));
           }
 
@@ -133,13 +139,16 @@ public class Graph {
 
     String baladeur = iataDestination;
     double distance = iataToAeroport.get(iataSource).getCout();
-    ArrayList<String> itineraire = new ArrayList<String>();
+    ArrayList<Vol> itineraire = new ArrayList<Vol>();
     while(!baladeur.equals(iataSource)){
-      itineraire.add(baladeur);
-      System.out.println(baladeur);
-      baladeur = path.get(baladeur);
+      itineraire.add(pathVol.get(baladeur));
+      //System.out.println( + " Distance : " + iataToAeroport.get(baladeur).getCout());
+      baladeur = pathVol.get(baladeur).getSource();
     }
-    System.out.println(iataToAeroport.get(iataDestination).getCout());
+    System.out.println("Distance : " + iataToAeroport.get(iataDestination).getCout());
+    for(int i=itineraire.size()-1; i>=0 ; i--){
+      System.out.println(itineraire.get(i) + " distance : " + iataToAeroport.get(itineraire.get(i).getDestination()).getCout());
+    }
     return "";
   }
 
