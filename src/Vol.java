@@ -1,3 +1,7 @@
+/**
+ * @author de Theux Boris, Di Tomasso Alessio
+ */
+
 public class Vol {
 
   private final String airline;

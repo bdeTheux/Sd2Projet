@@ -1,3 +1,7 @@
+/**
+ * @author de Theux Boris, Di Tomasso Alessio
+ */
+
 import java.io.*;
 import java.sql.SQLOutput;
 import java.util.ArrayDeque;

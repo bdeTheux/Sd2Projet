@@ -1,3 +1,7 @@
+/**
+ * @author de Theux Boris, Di Tomasso Alessio
+ */
+
 import java.util.Objects;
 
 public class Aeroport {
