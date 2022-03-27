@@ -115,7 +115,7 @@ public class Graph {
         }
       }
 
-      if(etiquetteProvisoire.isEmpty()) return "Aucun de vol vers cette aeroport";
+      if(etiquetteProvisoire.isEmpty()) return "Aucun vol vers cette aeroport";
       etiquetteDef.add(aeroport);
       aeroport = etiquetteProvisoire.iterator().next();
       etiquetteProvisoire.remove(aeroport);
